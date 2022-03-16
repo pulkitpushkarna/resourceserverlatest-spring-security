@@ -21,12 +21,15 @@ public class CouponRestController {
 	@PostMapping("/coupons")
 	public Coupon create(@RequestBody Coupon coupon) {
 		return repo.save(coupon);
-
 	}
 
 	@GetMapping("/coupons/{code}")
 	public Coupon getCoupon(@PathVariable("code") String code) {
 		return repo.findByCode(code);
+	}
 
+	@GetMapping("/coupons")
+	public String index() {
+		return "index";
 	}
 }
