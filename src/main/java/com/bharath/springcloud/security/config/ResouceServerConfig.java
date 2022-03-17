@@ -10,6 +10,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -44,11 +45,18 @@ public class ResouceServerConfig {
 		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtToAuthorityConverter());
 
 		http.authorizeRequests(authorizeRequests -> {
-			authorizeRequests
-					.mvcMatchers(HttpMethod.GET, "/couponapi/coupons").hasAnyRole( "USER")
-					.mvcMatchers(HttpMethod.POST, "/couponapi/coupons").hasRole("ADMIN")
-//					.anyRequest().authenticated()
-			;
+			try {
+				authorizeRequests
+						.mvcMatchers(HttpMethod.GET, "/couponapi/coupons").hasAnyRole( "USER")
+						.mvcMatchers(HttpMethod.POST, "/couponapi/coupons").hasRole("ADMIN")
+						.anyRequest().authenticated()
+						.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
+
+				;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}).oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter);
 		return http.build();
 
